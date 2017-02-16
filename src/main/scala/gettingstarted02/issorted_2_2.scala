@@ -4,6 +4,7 @@ package gettingstarted02
   * 2.2 isSorted
   */
 object issorted_2_2 {
+  @annotation.tailrec
   def isSorted[A](as: Array[A], ordered: (A, A) => Boolean): Boolean = {
     as.length match {
       case l if l < 2 => false
