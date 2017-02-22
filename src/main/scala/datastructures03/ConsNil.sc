@@ -37,7 +37,40 @@ object List {
     case Cons(h, Nil) => Nil // equals to l.length = 1
     case Cons(h, t) => Cons(h, init(t))
   }
+
+  def foldRight[A, B](as: List[A], z: B)(f: (A, B) => B): B = {
+    as match {
+      case Nil => z
+      case Cons(x, xs) => f(x, foldRight(xs, z)(f)) // 꼬리재귀가 아님!
+    }
+  }
+
+  /**
+    * 연습문제 3.9
+    */
+  def length[A](as: List[A]): Int = foldRight(as, 0)((a, b) => b + 1)
+
+  /**
+    * 연습문제 3.10
+    * 꼬리재귀가 있는 foldLeft
+    */
+  def foldLeft[A, B](as: List[A], z: B)(f: (B, A) => B): B = {
+    as match {
+      case Nil => z
+      case Cons(x, xs) => foldLeft(xs, f(z, x))(f)
+    }
+  }
+
+  /**
+    * 연습문제 3.13
+    * foldLeft를 이용한 foldRight
+    */
+  def foldRight2[A, B](as: List[A], z: B)(f: (A, B) => B): B = foldLeft(as, z)((b, a) => f(a, b))
+  def foldLeft2[A, B](as: List[A], z: B)(f: (B, A) => B): B = foldRight(as, z)((a, b) => f(b, a))
 }
 
 var l1 = List(1, 2, 3, 4, 5)
 var l2 = List.init(l1)
+
+List.foldRight(List(10, 5, 3), 0)(_ - _)
+List.foldRight2(List(10, 5, 3), 0)(_ - _)
