@@ -67,6 +67,31 @@ object List {
     */
   def foldRight2[A, B](as: List[A], z: B)(f: (A, B) => B): B = foldLeft(as, z)((b, a) => f(a, b))
   def foldLeft2[A, B](as: List[A], z: B)(f: (B, A) => B): B = foldRight(as, z)((a, b) => f(b, a))
+
+  /**
+    * 연습문제 3.15
+    */
+  def append[A](l1: List[A], l2: List[A]): List[A] = l1 match {
+    case Nil => l2
+    case Cons(x, xs) => Cons(x, append(xs, l2))
+  }
+
+  /**
+    * 연습문제 3.18
+    */
+  def map[A, B](as: List[A])(f: A => B): List[B] = as match {
+    case Nil => Nil
+    case Cons(x, xs) => Cons(f(x), map(xs)(f))
+  }
+
+  /**
+    * 연습문제 3.20
+    */
+  def flatMap[A, B](as: List[A])(f: A => List[B]): List[B] = as match {
+    case Nil => Nil
+    case Cons(x, xs) => append(f(x), flatMap(xs)(f))
+  }
+
 }
 
 var l1 = List(1, 2, 3, 4, 5)
@@ -74,3 +99,5 @@ var l2 = List.init(l1)
 
 List.foldRight(List(10, 5, 3), 0)(_ - _)
 List.foldRight2(List(10, 5, 3), 0)(_ - _)
+
+List.flatMap(List(1, 2, 3))(i => List(i, i))
