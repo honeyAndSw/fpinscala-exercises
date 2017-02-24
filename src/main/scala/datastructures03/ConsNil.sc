@@ -79,25 +79,25 @@ object List {
   /**
     * 연습문제 3.18
     */
-  def map[A, B](as: List[A])(f: A => B): List[B] = as match {
-    case Nil => Nil
-    case Cons(x, xs) => Cons(f(x), map(xs)(f))
-  }
+  def map[A, B](as: List[A])(f: A => B): List[B] = foldRight(as, Nil: List[B])((a, b) => Cons(f(a), b))
+//  as match {
+//    case Nil => Nil
+//    case Cons(x, xs) => Cons(f(x), map(xs)(f))
+//  }
 
   /**
     * 연습문제 3.20
     */
-  def flatMap[A, B](as: List[A])(f: A => List[B]): List[B] = as match {
-    case Nil => Nil
-    case Cons(x, xs) => append(f(x), flatMap(xs)(f))
-  }
+  def flatMap[A, B](as: List[A])(f: A => List[B]): List[B] = foldRight(as, Nil: List[B])((a, b) => append(f(a), b))
+//  as match {
+//    case Nil => Nil
+//    case Cons(x, xs) => append(f(x), flatMap(xs)(f))
+//  }
 
 }
 
-var l1 = List(1, 2, 3, 4, 5)
-var l2 = List.init(l1)
+List.foldRight(List(10, 5, 3, 9,2,3,4,5,6), "tt")((x,y) => x.toString + y)
+List.foldRight2(List(10, 5, 3,9,2,3,4,5,6), "tt")((x,y) => x.toString + y)
 
-List.foldRight(List(10, 5, 3), 0)(_ - _)
-List.foldRight2(List(10, 5, 3), 0)(_ - _)
-
-List.flatMap(List(1, 2, 3))(i => List(i, i))
+List.foldRight(List(1, 2, 3), 0)(_ - _)
+List.foldRight2(List(1, 2, 3), 0)(_ - _)
