@@ -1,3 +1,5 @@
+package fpis.datastructures03
+
 sealed trait List[+A]
 case object Nil extends List[Nothing]
 case class Cons[+A](head: A, tail: List[A]) extends List[A]
@@ -19,6 +21,15 @@ object List {
   }
 
   /**
+    * 연습문제 3.3
+    * List의 첫 요소를 다른 값으로 대체
+    */
+  def setHead[A](l: List[A], a: A): List[A] = l match {
+    case Nil => l
+    case Cons(_, xs) => Cons(a, xs)
+  }
+
+  /**
     * 연습문제 3.4
     * 목록에서 처음 n개의 요소를 제거
     */
@@ -27,6 +38,14 @@ object List {
       case Cons(h, t) if (n == 0) => l
       case Cons(h, t) if (n > 0) => drop(t, n - 1)
     }
+
+  /**
+    * 연습문제 3.5
+    */
+  def dropWhile[A](l: List[A], f: A => Boolean): List[A] = l match {
+    case Cons(x, xs) if f(x) => dropWhile(xs, f)
+    case _ => l
+  }
 
   /**
     * 연습문제 3.6
@@ -48,7 +67,7 @@ object List {
   /**
     * 연습문제 3.9
     */
-  def length[A](as: List[A]): Int = foldRight(as, 0)((a, b) => b + 1)
+  def length[A](as: List[A]): Int = foldRight(as, 0)((_, acc) => acc + 1)
 
   /**
     * 연습문제 3.10
@@ -60,6 +79,22 @@ object List {
       case Cons(x, xs) => foldLeft(xs, f(z, x))(f)
     }
   }
+
+  /**
+    * 연습문제 3.11
+    * foldLeft를 이용한 sum, product, length
+    */
+  def sum2(as: List[Int]): Int = foldLeft(as, 0)(_ + _)
+  def product2(as: List[Double]): Double = foldLeft(as, 1.0)(_ * _)
+  def length2[A](as: List[A]): Int = foldLeft(as, 0)((acc, _) => acc + 1)
+
+  /**
+    * 연습문제 3.12
+    * @param as
+    * @tparam A
+    * @return
+    */
+  def reverse[A](as: List[A]): List[A] = foldLeft(as, Nil: List[A])((acc, a) => Cons(a, acc))
 
   /**
     * 연습문제 3.13
@@ -95,9 +130,3 @@ object List {
 //  }
 
 }
-
-List.foldRight(List(10, 5, 3, 9,2,3,4,5,6), "tt")((x,y) => x.toString + y)
-List.foldRight2(List(10, 5, 3,9,2,3,4,5,6), "tt")((x,y) => x.toString + y)
-
-List.foldRight(List(1, 2, 3), 0)(_ - _)
-List.foldRight2(List(1, 2, 3), 0)(_ - _)
