@@ -71,4 +71,15 @@ class ListSpecs extends FunSuite {
     val c = concat(List(List('a', 'b', 'c'), List('d', 'e', 'f'), List('g', 'h', 'i')))
     c should equal (List('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'))
   }
+
+  test("increase") {
+    increase(Nil) should equal (Nil)
+    increase(List(1)) should equal (List(2))
+    increase(List(1, 2, 3)) should equal (List(2, 3, 4))
+  }
+
+  test("filter") {
+    filter(List(1, 2, 3, 4, 5))(_ % 2 == 0) should equal (List(1, 3, 5))
+    filter(List(1, 2, 3, 4, 5))(_ % 2 != 0) should equal (List(2, 4))
+  }
 }

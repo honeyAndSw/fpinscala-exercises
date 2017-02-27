@@ -90,9 +90,6 @@ object List {
 
   /**
     * 연습문제 3.12
-    * @param as
-    * @tparam A
-    * @return
     */
   def reverse[A](as: List[A]): List[A] = foldLeft(as, Nil: List[A])((acc, a) => Cons(a, acc))
 
@@ -122,13 +119,27 @@ object List {
   def concat[A](as: List[List[A]]): List[A] = foldLeft(as, Nil: List[A])((acc, a) => append(acc, a))
 
   /**
+    * 연습문제 3.16
+    */
+  def increase(as: List[Int]): List[Int] = foldRight(as, Nil: List[Int])((a, acc) => Cons(a + 1, acc))
+
+  /**
+    * 연습문제 3.17
+    */
+  def toString(as: List[Double]): List[String] = foldRight(as, Nil: List[String])((a, acc) => Cons(a.toString, acc))
+
+  /**
     * 연습문제 3.18
+    * 목록의 구조를 유지하면서 목록의 각 요소를 수정하는 일반적인 함수
     */
   def map[A, B](as: List[A])(f: A => B): List[B] = foldRight(as, Nil: List[B])((a, b) => Cons(f(a), b))
-//  as match {
-//    case Nil => Nil
-//    case Cons(x, xs) => Cons(f(x), map(xs)(f))
-//  }
+
+  /**
+    * 연습문제 3.19
+    * Predicate를 만족하는 요소들을 제거하는 함수
+    */
+  def filter[A](as: List[A])(f: A => Boolean): List[A] =
+    foldRight(as, Nil: List[A]){(a, acc) => if (f(a)) acc else Cons(a, acc)}
 
   /**
     * 연습문제 3.20
