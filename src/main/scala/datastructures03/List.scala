@@ -100,16 +100,26 @@ object List {
     * 연습문제 3.13
     * foldLeft를 이용한 foldRight
     */
-  def foldRight2[A, B](as: List[A], z: B)(f: (A, B) => B): B = foldLeft(as, z)((b, a) => f(a, b))
-  def foldLeft2[A, B](as: List[A], z: B)(f: (B, A) => B): B = foldRight(as, z)((a, b) => f(b, a))
+  def foldRight2[A, B](as: List[A], z: B)(f: (A, B) => B): B = foldLeft(reverse(as), z)((acc, a) => f(a, acc))
+  def foldLeft2[A, B](as: List[A], z: B)(f: (B, A) => B): B = foldRight(reverse(as), z)((a, acc) => f(acc, a))
 
-  /**
-    * 연습문제 3.15
-    */
   def append[A](l1: List[A], l2: List[A]): List[A] = l1 match {
     case Nil => l2
     case Cons(x, xs) => Cons(x, append(xs, l2))
   }
+
+  /**
+    * 연습문제 3.14
+    * foldLeft나 foldRight를 이용한 append
+    */
+  def append2[A](l1: List[A], l2: List[A]): List[A] = foldRight(l1, l2)((a, acc) => Cons(a, acc))
+  def append3[A](l1: List[A], l2: List[A]): List[A] = foldLeft(reverse(l1), l2)((acc, a) => Cons(a, acc))
+
+  /**
+    * 연습문제 3.15
+    * 목록들의 목록을 하나의 목록으로 연결
+    */
+  def concat[A](as: List[List[A]]): List[A] = foldLeft(as, Nil: List[A])((acc, a) => append(acc, a))
 
   /**
     * 연습문제 3.18
