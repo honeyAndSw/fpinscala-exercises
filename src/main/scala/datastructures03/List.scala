@@ -144,10 +144,28 @@ object List {
   /**
     * 연습문제 3.20
     */
-  def flatMap[A, B](as: List[A])(f: A => List[B]): List[B] = foldRight(as, Nil: List[B])((a, b) => append(f(a), b))
-//  as match {
-//    case Nil => Nil
-//    case Cons(x, xs) => append(f(x), flatMap(xs)(f))
-//  }
+  def flatMap[A, B](as: List[A])(f: A => List[B]): List[B] = foldRight(as, Nil: List[B])((a, acc) => append(f(a), acc))
 
+  /**
+    * 연습문제 3.21
+    * flatMap을 이용한 filter
+    */
+  def filter2[A](as: List[A])(f: A => Boolean): List[A] = flatMap(as)(a => if (f(a)) Nil else List(a))
+
+  /**
+    * 연습문제 3.22
+    * 대응되는 요소들을 더한 값들로 이루어진 새 목록
+    */
+  def zipInt(l1: List[Int], l2: List[Int]): List[Int] = (l1, l2) match {
+    case (Cons(h1, t1), Cons(h2, t2)) => Cons(h1 + h2, zipInt(t1, t2))
+    case (_, _) => Nil
+  }
+
+  /**
+    * 연습문제 3.23
+    */
+  def zipWith[A, B, C](l1: List[A], l2: List[B])(f: (A, B) => C): List[C] = (l1, l2) match {
+    case (Cons(h1, t1), Cons(h2, t2)) => Cons(f(h1, h2), zipWith(t1, t2)(f))
+    case (_, _) => Nil
+  }
 }

@@ -82,4 +82,19 @@ class ListSpecs extends FunSuite {
     filter(List(1, 2, 3, 4, 5))(_ % 2 == 0) should equal (List(1, 3, 5))
     filter(List(1, 2, 3, 4, 5))(_ % 2 != 0) should equal (List(2, 4))
   }
+
+  test("filter2") {
+    filter2(List(1, 2, 3, 4, 5))(_ % 2 == 0) should equal (List(1, 3, 5))
+    filter2(List(1, 2, 3, 4, 5))(_ % 2 != 0) should equal (List(2, 4))
+  }
+
+  test("flatMap") {
+    flatMap[Char, Char](List('a', 'b', 'c'))(c => List(c, c)) should equal (List('a', 'a', 'b', 'b', 'c', 'c'))
+  }
+
+  test("zipInt") {
+    zipInt(List(1, 2, 3), List(4, 5, 6)) should equal (List(5, 7, 9))
+    zipInt(List(1, 2, 3), List(4, 5)) should equal (List(5, 7))
+    zipInt(List(1, 2), List(4, 5, 6)) should equal (List(5, 7))
+  }
 }
