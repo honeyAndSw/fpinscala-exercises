@@ -29,4 +29,10 @@ class StreamSpecs extends FunSuite {
     f.stream.take(5).toList should equal (List(4.0, 8.0, 16.0, 32.0))
   }
 
+  test("forAll") {
+    val f = fixture
+    f.stream.forAll(d => d < 10.0) should equal (false)
+    f.stream.forAll(d => d < 33.0) should equal (true)
+  }
+
 }

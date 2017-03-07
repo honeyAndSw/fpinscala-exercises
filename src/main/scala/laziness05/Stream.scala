@@ -6,6 +6,17 @@ sealed trait Stream[+A] {
     case Cons(h, t) => Some(h())
   }
 
+  def exists(p: A => Boolean): Boolean = foldRight(false)((a, acc) => p(a) || acc)
+//  this match {
+//    case Cons(h, t) => p(h()) || t().exists(p)
+//    case _ => false
+//  }
+
+  def foldRight[B](z: => B)(f: (A, => B) => B): B = this match {
+    case Cons(h, t) => f(h(), t().foldRight(z)(f))
+    case _ => z
+  }
+
   /**
     * 연습문제 5.1
     * Stream의 평가를 강제한 List로
@@ -29,6 +40,11 @@ sealed trait Stream[+A] {
     * 처음 n개의 요소를 건너뛴 Stream을 돌려주는 함수
     */
   def drop(n: Int): Stream[A] = ???
+
+  /**
+    * 연습문제 5.4
+    */
+  def forAll(p: A => Boolean): Boolean = foldRight(true)((a, acc) => p(a) && acc)
 }
 
 case object Empty extends Stream[Nothing]
