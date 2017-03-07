@@ -44,7 +44,7 @@ object Either {
     }
   }
 
-  def sequence[E, A](es: List[Either[E, A]]): Either[E, List[A]] = traverse[E, Either[E, A], A](es)(a => a)
+  def sequence[E, A](es: List[Either[E, A]]): Either[E, List[A]] = traverse[E, Either[E, A], A](es)(identity)
 }
 
 

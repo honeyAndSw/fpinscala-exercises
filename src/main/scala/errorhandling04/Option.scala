@@ -37,7 +37,7 @@ object Option {
     Some(xs)
       .filter(_.length > 0)
       .flatMap { seq =>
-        val m = seq.foldLeft(0.0)(_ + _) / seq.length
+        val m = /* seq.foldLeft(0.0)(_ + _) */ seq.sum / seq.length
         val m2 = seq.map(d => math.pow(d - m, 2)).foldLeft(0.0)(_ + _) / seq.length
         Some(m2)
       }
@@ -70,6 +70,5 @@ object Option {
     }
   }
 
-  def sequence2[A](a: List[Option[A]]): Option[List[A]] =
-    traverse[Option[A], A](a)((aa: Option[A]) => aa)
+  def sequence2[A](a: List[Option[A]]): Option[List[A]] = traverse[Option[A], A](a)(identity)
 }
