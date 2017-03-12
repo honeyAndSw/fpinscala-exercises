@@ -34,9 +34,15 @@ class StreamSpecs extends FunSuite {
 
   test("take") {
     val f = fixture
+    f.stream.take(1).toList should equal (List(4.0))
     f.stream.take(2).toList should equal (List(4.0, 8.0))
     f.stream.take(0).toList should equal (Nil)
     f.stream.take(5).toList should equal (List(4.0, 8.0, 16.0, 32.0))
+
+    f.stream.take2(1).toList should equal (List(4.0))
+    f.stream.take2(2).toList should equal (List(4.0, 8.0))
+    f.stream.take2(0).toList should equal (Nil)
+    f.stream.take2(5).toList should equal (List(4.0, 8.0, 16.0, 32.0))
   }
 
   test("drop") {
@@ -48,8 +54,11 @@ class StreamSpecs extends FunSuite {
 
   test("takeWhile") {
     val f = fixture
-    f.stream.takeWhile(_ >= 4).toList should equal (List(4.0))
-    f.stream.takeWhile(_ > 10).toList should equal (List(4.0, 8.0, 16.0))
+    f.stream.takeWhile(_ >= 4).toList should equal (List(4.0, 8.0, 16.0, 32.0))
+    f.stream.takeWhile(_ > 10).toList should equal (Nil)
+
+    f.stream.takeWhile2(_ >= 4).toList should equal (List(4.0, 8.0, 16.0, 32.0))
+    f.stream.takeWhile2(_ > 10).toList should equal (Nil)
   }
 
   test("forAll") {
@@ -70,18 +79,26 @@ class StreamSpecs extends FunSuite {
     Stream.empty.headOption2 should equal (None)
   }
 
+  test("append") {
+    val stream2 = Stream.cons(100, Stream.cons(101, Stream.cons(102, Stream.empty)))
+
+    val f = fixture
+    f.stream.append(stream2).toList should equal(List(4.0, 8.0, 16.0, 32.0, 100, 101, 102))
+  }
+
   test("constant") {
     val constant = Stream.constant(1)
     constant.take(3).toList should equal (List(1, 1, 1))
   }
 
   test("from") {
-    val from = Stream.from(1)
-    from.take(5).toList should equal (List(1, 2, 3, 4, 5))
+    Stream.from(1).take(5).toList should equal (List(1, 2, 3, 4, 5))
+    Stream.from2(1).take(5).toList should equal (List(1, 2, 3, 4, 5))
   }
 
   test("fibs") {
     Stream.fibs().take(5).toList should equal (List(0, 1, 1, 2, 3))
+    Stream.fibs2().take(5).toList should equal (List(0, 1, 1, 2, 3))
   }
 
   test("unfold") {
@@ -92,5 +109,26 @@ class StreamSpecs extends FunSuite {
       if (i > 20) None else Some((i + 1, i + 10))
     }
     unfold2.take(5).toList should equal (List(2, 12))
+  }
+
+  test("map") {
+    fixture.stream.map(d => d - 10).toList should equal (List(-6, -2, 6, 22))
+    fixture.stream.map2(d => d - 10).toList should equal (List(-6, -2, 6, 22))
+  }
+
+  test("zipWith a stream of the same length") {
+    val s1 = Stream.cons(1, Stream.cons(2, Stream.cons(3, Stream.empty)))
+    val s2 = Stream.cons(4, Stream.cons(5, Stream.cons(6, Stream.empty)))
+    s1.zipAll(s2).toList should equal {
+      List((Some(1), Some(4)), (Some(2), Some(5)), (Some(3), Some(6)))
+    }
+  }
+
+  test("zipWith a stream of different length") {
+    val s1 = Stream.cons(1, Stream.cons(2, Stream.cons(3, Stream.empty)))
+    val s2 = Stream.cons(4, Stream.cons(5, Stream.empty))
+    s1.zipAll(s2).toList should equal {
+      List((Some(1), Some(4)), (Some(2), Some(5)), (Some(3), Option.empty))
+    }
   }
 }
