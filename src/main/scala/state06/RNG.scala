@@ -4,16 +4,17 @@ trait RNG {
   def nextInt: (Int, RNG)
 }
 
-case class SimpleRNG(seed: Long) extends RNG {
-  override def nextInt: (Int, RNG) = {
-    val newSeed = (seed * 0x5DEECD66DL + 0xBL) & 0xFFFFFFFFFFFFL
-    val newRNG = SimpleRNG(newSeed)
-    val n = (newSeed >>> 16).toInt
-    (n, newRNG)
-  }
-}
-
 object RNG {
+
+  case class SimpleRNG(seed: Long) extends RNG {
+    override def nextInt: (Int, RNG) = {
+      val newSeed = (seed * 0x5DEECD66DL + 0xBL) & 0xFFFFFFFFFFFFL
+      val newRNG = SimpleRNG(newSeed)
+      val n = (newSeed >>> 16).toInt
+      (n, newRNG)
+    }
+  }
+
   /**
     * 연습문제 6.1
     * 0 이상, Int.MaxValue 이하의 난수 정수를 생성하는 함수
