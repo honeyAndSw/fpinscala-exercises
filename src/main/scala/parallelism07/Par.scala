@@ -95,16 +95,28 @@ object Par {
   /**
     * 연습문제 7.13
     */
-  def chooser[A, B](pa: Par[A])(choices: A => Par[B]): Par[B] = es => {
+  def flatMap[A, B](pa: Par[A])(choices: A => Par[B]): Par[B] = es => {
     val a: A = run(es)(pa).get()
     run(es)(choices(a))
   }
 
   def choiceViaChooser[A](cond: Par[Boolean])(t: Par[A], f: Par[A]): Par[A] =
-    chooser(cond)(b => if (b) t else f)
+    flatMap(cond)(b => if (b) t else f)
 
   def choiceNViaChooser[A](n: Par[Int])(choices: List[Par[A]]): Par[A] =
-    chooser(n)(i => choices(i))
+    flatMap(n)(i => choices(i))
 
+  /**
+    * 연습문제 7.14
+    */
+  def join[A](a: Par[Par[A]]): Par[A] = es => {
+    val fa: Par[A] = run(es)(a).get()
+    run(es)(fa)
+  }
 
+  def flatMapViaJoin[A, B](pa: Par[A])(choices: A => Par[B]): Par[B] =
+    join(map[A, Par[B]](pa)(choices))
+
+  def joinViaFlatMap[A](a: Par[Par[A]]): Par[A] =
+    flatMap(a)(pa => pa)
 }
