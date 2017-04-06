@@ -1,9 +1,8 @@
 package testing08
 
-import fpinscala.testing.RNG
 import fpinscala.testing.RNG.Rand
-import fpinscala.testing.State
-import testing08.Prop.{FailedCase, SuccessCount}
+import fpinscala.testing.{RNG, State}
+import testing08.Prop.{Result, TestCases}
 
 // p.104 계산된 다음 상태를 프로그램의 나머지 부분에 전달하는 책임을 호출자에게 지우는 것
 // State[RNG, A]는 Rand를 감싼 것과 동일하다.
@@ -49,8 +48,8 @@ object Gen {
       (i % 2 == 0, r)
     })
 
-  // p.108 연습문제 6.7
   def listOfN[A](n: Int, g: Gen[A]): Gen[List[A]] = {
+    // p.108 연습문제 6.7
     val list: List[State[RNG, A]] = List.fill(n)(g.sample)
     Gen(State.sequence(list))
   }
@@ -58,23 +57,50 @@ object Gen {
 
 }
 
-trait Prop {
+/* -------------------- Prop -------------------- */
 
-  def check: Either[(FailedCase, SuccessCount), SuccessCount]
+object Prop {
+  type TestCases = Int
+  type FailedCase = String
+  type SuccessCount = Int
+
+  // Some(테스트 최종 상태) => 테스트 실패
+  // None => 테스트 성공, 테스트 실패가 존재하지 않음
+  // type Result = Option[(FailedCase, SuccessCount)]
+  sealed trait Result {
+    def isFalsified: Boolean
+  }
+
+  case object Passed extends Result {
+    override def isFalsified: Boolean = false
+  }
+
+  case class Failed(failure: FailedCase, successes: SuccessCount) extends Result {
+    override def isFalsified: Boolean = true
+  }
+
+  def forAll[A](as: Gen[A])(f: A => Boolean): Prop = Prop { (n, rng) =>
+    randomStream(as)(rng)
+      .zip(Stream.from(0)).take(n) // (a, i) Stream을 만들어서 n개를 가져옴
+      .map { case (a, i) => ???
+
+      }
+  }
+
+  def randomStream[A](g: Gen[A])(rng: RNG): Stream[A] = ???
+}
+
+case class Prop(run: (TestCases, RNG) => Result) {
+//  def check: Either[(FailedCase, SuccessCount), SuccessCount] = ???
 
   /**
    * 연습문제 8-3
-  def &&(p: Prop): Prop = {
-    val c1 = check
-
-    new Prop {
-      override def check: Boolean = c1 && p.check
-    }
-  }
   */
-}
-
-object Prop {
-  type FailedCase = String
-  type SuccessCount = Int
+//  def &&(p: Prop): Prop = {
+//    val c1 = check
+//
+//    new Prop {
+//      override def check: Boolean = c1 && p.check
+//    }
+//  }
 }
