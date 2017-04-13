@@ -115,6 +115,18 @@ sealed trait Stream[+A] {
     * 연습문제 5.14
     */
   def startsWith[A](s: Stream[A]): Boolean = ???
+
+  //
+  // Methods added later for testing08.Gen to use
+  //
+
+  def zip[B](s2: Stream[B]): Stream[(A,B)] = zipWith(s2)((_,_))
+
+  @annotation.tailrec
+  final def find(f: A => Boolean): Option[A] = this match {
+    case Empty => None
+    case Cons(h, t) => if (f(h())) Some(h()) else t().find(f)
+  }
 }
 
 case object Empty extends Stream[Nothing]

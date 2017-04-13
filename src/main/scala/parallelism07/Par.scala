@@ -119,4 +119,10 @@ object Par {
 
   def joinViaFlatMap[A](a: Par[Par[A]]): Par[A] =
     flatMap(a)(pa => pa)
+
+  //
+  // Methods added later for testing08.Gen to use
+  //
+
+  def equal[A](p1: Par[A], p2: Par[A]): Par[Boolean] = Par.map2(p1, p2)(_ == _)
 }
