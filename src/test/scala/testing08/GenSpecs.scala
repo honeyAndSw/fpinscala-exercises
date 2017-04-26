@@ -42,6 +42,7 @@ class GenSpecs extends FunSuite {
 
     // 검사의 의도가 명확하게 드러나지 않는다.
     val p1 = Prop.forAll(Gen.unit(Par.unit(1))) { i =>
+      // Par.map(i)(_ + 1) == Par.unit(2)
       Par.map(i)(_ + 1)(es).get == Par.unit(2)(es).get
     }
     // Prop.run(p1)
