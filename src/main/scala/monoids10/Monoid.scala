@@ -16,6 +16,14 @@ object Monoid {
   }
 
   /**
+    * 연습문제 10.1
+    */
+  val intAddition = new Monoid[Int] {
+    override def op(a1: Int, a2: Int): Int = a1 + a2
+    override def zero: Int = 0
+  }
+
+  /**
     * 연습문제 10.3
     */
   def endMonoid[A]: Monoid[A => A] = new Monoid[A => A] {
