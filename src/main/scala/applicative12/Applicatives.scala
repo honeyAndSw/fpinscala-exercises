@@ -1,6 +1,7 @@
 package applicative12
 
 import monads11.{Functor, Monad}
+import monoids10.Monoid
 
 trait Applicative[F[_]] extends Functor[F] {
   /////////////// Applicative의 기본수단 ///////////////
@@ -90,16 +91,17 @@ object Applicative {
   sealed trait Validation[+E, +A]
   case class Failure[E](head: E, tail: Vector[E] = Vector()) extends Validation[E, Nothing]
   case class Success[A](a: A) extends Validation[Nothing, A]
+
+  type Const[M, B] = M
+  implicit def monoidApplicative[M](M: Monoid[M]) = new Applicative[({ type f[x] = Const[M,x] })#f] {
+    override def map2[A, B, C](m1: M, m2: M)(f: (A, B) => C): M = M.op(m1, m2)
+    override def unit[A](a: => A): M = M.zero
+  }
 }
 
 /********** Traverse **********/
 
-trait Traverse[F[_]] {
-  def traverse[G[_] : Applicative, A, B](fa: F[A])(f: A => G[B]): G[F[B]] // = sequence(map(fa)(f))
-  def sequence[G[_] : Applicative, A](fba: F[G[A]]): G[F[A]] = traverse(fba)(ma => ma)
-
-  def map[A,B](fa: F[A])(f: A => B): F[B] // <-- ???
-}
-
-object Traverse {
+trait Traverse[F[_]] extends Functor[F] {
+  def traverse[G[_] : Applicative, A, B](fa: F[A])(f: A => G[B])(implicit G: Applicative[G]): G[F[B]] = sequence(map(fa)(f))
+  def sequence[G[_] : Applicative, A](fba: F[G[A]])(implicit G: Applicative[G]): G[F[A]] = traverse(fba)(ma => ma)
 }
