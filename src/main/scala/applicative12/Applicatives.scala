@@ -49,7 +49,7 @@ trait Applicative[F[_]] extends Functor[F] {
     */
   def sequence[A](lma: List[F[A]]): F[List[A]] = traverse(lma)(fa => fa)
   def replicateM[A](n: Int, fa: F[A]): F[List[A]] = sequence(List.fill(n)(fa)) //(for (i <- 0 until n) yield fa).toList
-  def product[A,B](fa: F[A], fb: F[B]): F[(A, B)] = map2(fa, fb)((_, _))
+  // def product[A,B](fa: F[A], fb: F[B]): F[(A, B)] = map2(fa, fb)((_, _))
 
   /**
     * 연습문제 12.12
@@ -101,7 +101,28 @@ object Applicative {
 
 /********** Traverse **********/
 
-trait Traverse[F[_]] extends Functor[F] {
-  def traverse[G[_] : Applicative, A, B](fa: F[A])(f: A => G[B])(implicit G: Applicative[G]): G[F[B]] = sequence(map(fa)(f))
-  def sequence[G[_] : Applicative, A](fba: F[G[A]])(implicit G: Applicative[G]): G[F[A]] = traverse(fba)(ma => ma)
+trait Traverse[F[_]] {
+  // Possible to implement traverse like `sequence(map(fa)(f))`
+  // but `map` should be in Traverse in this way.
+  def traverse[G[_] : Applicative, A, B](fa: F[A])(f: A => G[B]): G[F[B]]
+
+  def sequence[G[_] : Applicative, A](fba: F[G[A]]): G[F[A]] = traverse(fba)(ma => ma)
+}
+
+object Traverse {
+  case class Tree[+A](head: A, tail: List[Tree[A]])
+
+  /**
+    * 연습문제 12.13
+    */
+  val treeTraverse = new Traverse[Tree] {
+    override def traverse[G[_], A, B](fa: Tree[A])(f: (A) => G[B])(implicit G: Applicative[G]): G[Tree[B]] = {
+      G.map2( // Tree의 head, tail에 map
+        f(fa.head), // G[B]
+        fa.tail.foldRight(G.unit { List[Tree[B]]() }) { (t: Tree[A], acc) => // G[List[Tree[B]]], 아래 부분을 listTraverse로 분리할 수 있다.
+          G.map2(traverse(t)(f), acc)(_ :: _)
+        }
+      )(Tree[B](_, _)) // 새로운 Tree 생성
+    }
+  }
 }
