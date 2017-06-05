@@ -80,6 +80,7 @@ trait Functor[F[_]] {
   def distribute[A,B](fab: F[(A, B)]): (F[A], F[B]) =
     (map(fab)(_._1), map(fab)(_._2))
 
+  // 거울에 비친 상을 생각하면 됨.
   def codistribute[A,B](e: Either[F[A], F[B]]): F[Either[A, B]] =
     e match {
       case Left(fa) => map(fa)(Left(_))
