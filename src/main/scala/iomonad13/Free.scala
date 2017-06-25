@@ -27,13 +27,13 @@ import parallelism07.Par._
   4.1
   유보된 함수가 비동기 실행을 지원하도록,
   Suspend[A](resume: () => A) ==> Suspend[A](resume: Par[A])
-  function0이나 Par를 추상화해서 trait Free[F[_], A] ==> 자유모나드
+  function0이나 Par를 추상화해서 `trait Free[F[_], A]` ==> 자유모나드
   4.2
   단, flatMap을 구현할 수 없는 trait는 run을 사용 못함
   trait Translate[F[_],G[_]]
   def runFree(free: Free[F,A])(t: F ~> G)(implicit G: Monad[G])
 
-5. 비차단 비동기 입출력
+5. 비차단 비동기 입출력 - <문제점 3>
 6. 범용 IO 형식
 7. IO 형식이 스트림 방식 입출력에 충분하지 않은 이유
 
